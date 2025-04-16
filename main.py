@@ -12,7 +12,7 @@ import speech_recognition as sr
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from pydub import AudioSegment
-
+import tempfile
 # ----------------- PAGE CONFIG -----------------
 st.set_page_config(page_title="Smart Learning AI", layout="wide")
 
