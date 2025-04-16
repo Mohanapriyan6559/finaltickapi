@@ -14,6 +14,12 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from pydub import AudioSegment
 import tempfile
+from mcq import cqmain
+import random
+import nltk
+from nltk.tokenize import sent_tokenize, word_tokenize
+from nltk.corpus import stopwords
+from heapq import nlargest
 # ----------------- PAGE CONFIG -----------------
 st.set_page_config(page_title="Smart Learning AI", layout="wide")
 
@@ -120,6 +126,38 @@ def chatbots():
                 st.success(reply)
             except Exception as e:
                 st.error(f"❌ Error: {e}")
+
+# ----------------- IDEA FILE COMPRESSER -----------------
+def mcq_generator():
+    st.title("MCQ Generator")
+    input_text = st.text_area("Enter educational content:", height=300)
+    if st.button("Generate MCQs"):
+        if input_text.strip():
+            sentences = sent_tokenize(input_text)
+            words = word_tokenize(input_text.lower())
+            stop_words = set(stopwords.words("english"))
+            word_freq = {}
+            for word in words:
+                if word.isalpha() and word not in stop_words:
+                    word_freq[word] = word_freq.get(word, 0) + 1
+            keywords = nlargest(5, word_freq, key=word_freq.get)
+            
+            st.subheader("Generated Questions:")
+            for i, keyword in enumerate(keywords):
+                for sent in sentences:
+                    if keyword in sent.lower():
+                        question = sent.replace(keyword, "______")
+                        st.markdown(f"**Q{i+1}:** {question}")
+                        options = random.sample(keywords, 3)
+                        if keyword not in options:
+                            options[random.randint(0, 2)] = keyword
+                        random.shuffle(options)
+                        for idx, opt in enumerate(options):
+                            st.markdown(f"- {chr(65+idx)}. {opt}")
+                        break
+        else:
+            st.warning("Please enter some text to generate MCQs.")
+
 
 # ----------------- MAIN APP -----------------
 def main():
