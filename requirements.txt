@@ -6,3 +6,4 @@ joblib
 youtube-transcript-api
 AudioSegment
 openai
+nltk
