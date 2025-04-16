@@ -147,7 +147,7 @@ def main():
     elif selection == "YouTube Transcript":
         youtube_transcript()
     elif selection == "Unlimited Chatbot":
-        chatbot_ui()
+        chatbots()
     elif selection == "Idea-File-Compress":
         idea_file_compress()
     elif selection == "MCQ":
