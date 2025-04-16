@@ -49,24 +49,38 @@ def text_to_speech():
             st.warning("Please enter some text.")
 
 # ----------------- SPEECH TO TEXT -----------------
+import streamlit as st
+import speech_recognition as sr
+from pydub import AudioSegment
+import tempfile
+
 def speech_to_text():
     st.title("Speech to Text")
+    st.markdown("Upload a WAV/MP3 audio file and get it transcribed.")
 
-    uploaded_file = st.file_uploader("Upload an audio file (WAV format recommended)", type=["wav", "mp3"])
+    uploaded_file = st.file_uploader("Upload an audio file", type=["wav", "mp3", "flac", "ogg"])
+
     if uploaded_file:
-        recognizer = sr.Recognizer()
-        with sr.AudioFile(uploaded_file) as source:
-            audio = recognizer.record(source)
-            st.info("Transcribing...")
-            try:
-                text = recognizer.recognize_google(audio)
-                st.success(f"Transcription: {text}")
-            except sr.UnknownValueError:
-                st.error("Could not understand the audio.")
-            except sr.RequestError as e:
-                st.error(f"Google API Error: {e}")
-            except Exception as e:
-                st.error(f"Unexpected error: {e}")
+        try:
+            # Save uploaded file temporarily
+            temp_audio = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
+            
+            # Convert to WAV using pydub
+            audio = AudioSegment.from_file(uploaded_file)
+            audio.export(temp_audio.name, format="wav")
+
+            # Transcribe using SpeechRecognition
+            recognizer = sr.Recognizer()
+            with sr.AudioFile(temp_audio.name) as source:
+                st.info("Processing and transcribing...")
+                audio_data = recognizer.record(source)
+                text = recognizer.recognize_google(audio_data)
+                st.success("Transcription:")
+                st.write(text)
+
+        except Exception as e:
+            st.error(f"❌ Error: {e}")
+
 
 # ----------------- YOUTUBE TRANSCRIPT -----------------
 def youtube_transcript():
