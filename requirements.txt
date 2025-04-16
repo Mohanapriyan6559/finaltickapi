@@ -5,3 +5,4 @@ scikit-learn
 joblib
 youtube-transcript-api
 AudioSegment
+openai
