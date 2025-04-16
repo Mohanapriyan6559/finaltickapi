@@ -21,6 +21,8 @@ from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
 from heapq import nlargest
 import fitz
+from streamlit_mic_recorder import mic_recorder
+import io
 
 # ----------------- PAGE CONFIG -----------------
 st.set_page_config(page_title="Smart Learning AI", layout="wide")
@@ -59,23 +61,30 @@ def text_to_speech():
 
 # ----------------- SPEECH TO TEXT -----------------
 def speech_to_text():
-    st.title("Speech to Text")
+    st.title("Speech-to-Text Converter")
 
-    uploaded_file = st.file_uploader("Upload an audio file (WAV format recommended)", type=["wav", "mp3"])
-    if uploaded_file:
+    # Record audio from the microphone
+    audio_data = mic_recorder(start_prompt="Start Recording", stop_prompt="Stop Recording")
+
+    if audio_data:
+        st.audio(audio_data['bytes'], format='audio/wav')
+
+        # Initialize the recognizer
         recognizer = sr.Recognizer()
-        with sr.AudioFile(uploaded_file) as source:
+
+        # Use the recorded audio data for transcription
+        with sr.AudioFile(io.BytesIO(audio_data['bytes'])) as source:
             audio = recognizer.record(source)
-            st.info("Transcribing...")
-            try:
-                text = recognizer.recognize_google(audio)
-                st.success(f"Transcription: {text}")
-            except sr.UnknownValueError:
-                st.error("Could not understand the audio.")
-            except sr.RequestError as e:
-                st.error(f"Google API Error: {e}")
-            except Exception as e:
-                st.error(f"Unexpected error: {e}")
+
+        try:
+            # Transcribe the audio using Google's speech recognition
+            transcription = recognizer.recognize_google(audio)
+            st.write("Transcribed Text:")
+            st.success(transcription)
+        except sr.UnknownValueError:
+            st.error("Could not understand the audio.")
+        except sr.RequestError as e:
+            st.error(f"Could not request results; {e}")
  
 
 
