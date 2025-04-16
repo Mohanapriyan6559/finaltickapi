@@ -20,6 +20,7 @@ import nltk
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
 from heapq import nlargest
+import fitz
 
 # ----------------- PAGE CONFIG -----------------
 st.set_page_config(page_title="Smart Learning AI", layout="wide")
@@ -128,7 +129,7 @@ def chatbots():
             except Exception as e:
                 st.error(f"❌ Error: {e}")
 
-# ----------------- IDEA FILE COMPRESSER -----------------
+# ----------------- MCQ -----------------
 def mcq_generator():
     st.title("MCQ Generator")
     input_text = st.text_area("Enter educational content:", height=300)
@@ -158,7 +159,41 @@ def mcq_generator():
                         break
         else:
             st.warning("Please enter some text to generate MCQs.")
+#------------------- FILE COMPRESE---------
+def idea_file_compress():
+    st.title("Idea & File Compression (PDF Summarizer)")
+    uploaded_file = st.file_uploader("Upload a PDF file", type=["pdf"])
+    if uploaded_file is not None:
+        try:
+            doc = fitz.open(stream=uploaded_file.read(), filetype="pdf")
+            text = ""
+            for page in doc:
+                text += page.get_text()
+            doc.close()
+            if text:
+                summarized = summarize_text(text)
+                st.subheader("Summarized Content:")
+                st.text_area("Summary", summarized, height=300)
+            else:
+                st.warning("No readable text found in PDF.")
+        except Exception as e:
+            st.error(f"Error reading PDF: {e}")
 
+def summarize_text(text, max_sentences=5):
+    sentences = sent_tokenize(text)
+    words = word_tokenize(text.lower())
+    stop_words = set(stopwords.words("english"))
+    word_freq = {}
+    for word in words:
+        if word.isalpha() and word not in stop_words:
+            word_freq[word] = word_freq.get(word, 0) + 1
+    sentence_scores = {}
+    for sent in sentences:
+        for word in word_tokenize(sent.lower()):
+            if word in word_freq:
+                sentence_scores[sent] = sentence_scores.get(sent, 0) + word_freq[word]
+    summary = nlargest(max_sentences, sentence_scores, key=sentence_scores.get)
+    return " ".join(summary)
 
 # ----------------- MAIN APP -----------------
 def main():
