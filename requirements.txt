@@ -2,3 +2,4 @@ youtube_transcript_api
 pyttsx3
 gTTS
 Client
+openai
