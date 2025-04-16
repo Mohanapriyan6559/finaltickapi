@@ -6,6 +6,7 @@
 import streamlit as st
 import os
 import joblib
+import openai
 from gtts import gTTS
 from youtube_transcript_api import YouTubeTranscriptApi
 import speech_recognition as sr
@@ -100,17 +101,25 @@ def hate_speech_checker():
             st.error(f"Model Error: {e}")
 
 # ----------------- PLACEHOLDER FOR OTHER FUNCTIONS -----------------
-def chatbot_ui():
-    st.title("Unlimited AI Chatbot")
-    st.info("🔧 Chatbot functionality placeholder (LLM API needed).")
+openai.api_key = st.secrets.get("OPENAI_API_KEY", "")
 
-def idea_file_compress():
-    st.title("Idea & File Compression")
-    st.info("🔧 PDF summarizer placeholder.")
+def chatbots():
+    st.title("AI Chatbot")
+    user_input = st.text_input("Ask something:", "")
 
-def mcq_generator():
-    st.title("MCQ Generator")
-    st.info("🔧 MCQ generation logic placeholder.")
+    if st.button("Send") and user_input:
+        with st.spinner("Thinking..."):
+            try:
+                response = openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo",  # Or gpt-4 if available
+                    messages=[
+                        {"role": "user", "content": user_input}
+                    ]
+                )
+                reply = response['choices'][0]['message']['content']
+                st.success(reply)
+            except Exception as e:
+                st.error(f"❌ Error: {e}")
 
 # ----------------- MAIN APP -----------------
 def main():
