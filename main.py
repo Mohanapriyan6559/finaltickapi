@@ -1,5 +1,6 @@
 import streamlit as st
 from youtube import youmain
+import openai
 from front import fmain
 from speechtovoice import speech
 from mcq import cqmain
