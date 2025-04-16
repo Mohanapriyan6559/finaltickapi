@@ -20,7 +20,7 @@ import nltk
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
 from heapq import nlargest
-import fitz
+
 # ----------------- PAGE CONFIG -----------------
 st.set_page_config(page_title="Smart Learning AI", layout="wide")
 
