@@ -1,6 +1,5 @@
 import streamlit as st
 from youtube import youmain
-from summarize import spmain
 from pdfsummerizer import pdfsummerizermain
 from front import fmain
 from speechtovoice import speech
