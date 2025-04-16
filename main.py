@@ -2,7 +2,7 @@ import streamlit as st
 from youtube import youmain
 from front import fmain
 from speechtovoice import speech
-from ollama import Client
+# from ollama import Client
 from mcq import cqmain
 from bad import bads
 
