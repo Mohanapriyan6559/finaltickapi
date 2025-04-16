@@ -8,4 +8,5 @@ AudioSegment
 openai
 nltk
 PyMuPDF
+streamlit-mic-recorder
 
