@@ -1,5 +1,6 @@
-youtube_transcript_api
-pyttsx3
+streamlit
 gTTS
-Client
-openai
+speechrecognition
+scikit-learn
+joblib
+youtube-transcript-api
