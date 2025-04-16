@@ -178,7 +178,7 @@ def idea_file_compress():
                 st.warning("No readable text found in PDF.")
         except Exception as e:
             st.error(f"Error reading PDF: {e}")
-
+#----summarize text---
 def summarize_text(text, max_sentences=5):
     sentences = sent_tokenize(text)
     words = word_tokenize(text.lower())
@@ -194,6 +194,33 @@ def summarize_text(text, max_sentences=5):
                 sentence_scores[sent] = sentence_scores.get(sent, 0) + word_freq[word]
     summary = nlargest(max_sentences, sentence_scores, key=sentence_scores.get)
     return " ".join(summary)
+
+#----hate speech------
+def hate_speech_checker():
+    st.title("Hate Speech Detection")
+    user_input = st.text_area("Enter text to check:", height=150)
+    if st.button("Analyze Text"):
+        if not user_input.strip():
+            st.warning("Please enter some text.")
+            return
+        try:
+            model = joblib.load("hate_speech_model.pkl")
+            vectorizer = joblib.load("tfidf_vectorizer.pkl")
+
+            vectorized = vectorizer.transform([user_input])
+            prediction = model.predict(vectorized)
+            prob = model.predict_proba(vectorized)[0]
+
+            if prediction[0] == 1:
+                st.error(f"⚠️ Hate Speech Detected (Confidence: {prob[1]*100:.2f}%)")
+            else:
+                st.success(f"✅ No Hate Speech Detected (Confidence: {prob[0]*100:.2f}%)")
+
+        except FileNotFoundError:
+            st.error("❌ Model or vectorizer file not found. Please upload 'hate_speech_model.pkl' and 'tfidf_vectorizer.pkl'.")
+        except Exception as e:
+            st.error(f"🔧 Error during analysis: {e}")
+
 
 # ----------------- MAIN APP -----------------
 def main():
