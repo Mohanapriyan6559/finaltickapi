@@ -49,8 +49,7 @@ def text_to_speech():
             st.warning("Please enter some text.")
 
 # ----------------- SPEECH TO TEXT -----------------
-
- def speech_to_text():
+def speech_to_text():
     st.title("Speech to Text")
 
     uploaded_file = st.file_uploader("Upload an audio file (WAV format recommended)", type=["wav", "mp3"])
@@ -68,7 +67,7 @@ def text_to_speech():
                 st.error(f"Google API Error: {e}")
             except Exception as e:
                 st.error(f"Unexpected error: {e}")
-
+ 
 
 
 # ----------------- YOUTUBE TRANSCRIPT -----------------
