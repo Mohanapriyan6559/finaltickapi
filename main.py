@@ -1,6 +1,5 @@
 import streamlit as st
 from youtube import youmain
-from pdfsummerizer import pdfsummerizermain
 from front import fmain
 from speechtovoice import speech
 from ollama import Client
